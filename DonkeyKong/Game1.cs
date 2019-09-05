@@ -1,4 +1,7 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System;
+using DonkeyKong.Factories;
+using DonkeyKong.Models;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
@@ -14,6 +17,9 @@ namespace DonkeyKong
         private Texture2D myTexture;
         private Texture2D rect;
         private int x = 1;
+        private int xPositionMario = 0;
+
+        private Mario _mario;
 
         public Game1()
         {
@@ -22,6 +28,14 @@ namespace DonkeyKong
 
             graphics.PreferredBackBufferHeight = 700;
             graphics.PreferredBackBufferWidth = 1000;
+
+            TargetElapsedTime = TimeSpan.FromMilliseconds(1000.0f / 24);
+
+            _mario = (Mario)CharacterFactory.Create("Mario");
+            _mario.Width = int.Parse(Math.Round(220 * (_mario.Scale / 10.0), MidpointRounding.ToEven) + "");
+            _mario.Heigth = int.Parse(Math.Round(337 * (_mario.Scale / 10.0), MidpointRounding.ToEven) + "");
+            _mario.Position = new Point(0,
+                int.Parse(700 - _mario.Heigth - 60 + string.Empty));
         }
 
         /// <summary>
@@ -70,6 +84,14 @@ namespace DonkeyKong
                 Exit();
 
             // TODO: Add your update logic here
+            KeyboardState state = Keyboard.GetState();
+
+            if (state.IsKeyDown(Keys.Right))
+                _mario.Position.X += 10;
+            if (state.IsKeyDown(Keys.Left))
+                _mario.Position.X -= 10;
+
+
             rect = new Texture2D(graphics.GraphicsDevice, GraphicsDevice.Viewport.Width, 30);
 
             Color[] data = new Color[GraphicsDevice.Viewport.Width * 30];
@@ -93,6 +115,11 @@ namespace DonkeyKong
             spriteBatch.Begin();
             spriteBatch.Draw(rect, new Vector2(0, GraphicsDevice.Viewport.Height - rect.Height), Color.HotPink);
             spriteBatch.Draw(rect, new Vector2(0, GraphicsDevice.Viewport.Height - rect.Height * x), Color.HotPink);
+
+            double mario = (myTexture.Height * (2.0 / 10.0));
+            int yPosition = int.Parse(Math.Round(GraphicsDevice.Viewport.Height - mario, MidpointRounding.ToEven) - rect.Height + string.Empty);
+            spriteBatch.Draw(myTexture, _mario.Position.ToVector2(), scale: new Vector2(.2f));
+
             spriteBatch.End();
 
             base.Draw(gameTime);
