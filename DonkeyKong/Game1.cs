@@ -11,11 +11,17 @@ namespace DonkeyKong
     {
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
+        private Texture2D myTexture;
+        private Texture2D rect;
+        private int x = 1;
 
         public Game1()
         {
             graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
+
+            graphics.PreferredBackBufferHeight = 700;
+            graphics.PreferredBackBufferWidth = 1000;
         }
 
         /// <summary>
@@ -41,6 +47,7 @@ namespace DonkeyKong
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
             // TODO: use this.Content to load your game content here
+            myTexture = Content.Load<Texture2D>("mario");
         }
 
         /// <summary>
@@ -63,6 +70,12 @@ namespace DonkeyKong
                 Exit();
 
             // TODO: Add your update logic here
+            rect = new Texture2D(graphics.GraphicsDevice, GraphicsDevice.Viewport.Width, 30);
+
+            Color[] data = new Color[GraphicsDevice.Viewport.Width * 30];
+            for (int i = 0; i < data.Length; ++i) data[i] = Color.Chocolate;
+            rect.SetData(data);
+
 
             base.Update(gameTime);
         }
@@ -73,9 +86,14 @@ namespace DonkeyKong
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Draw(GameTime gameTime)
         {
-            GraphicsDevice.Clear(Color.CornflowerBlue);
+            GraphicsDevice.Clear(new Color(30, 30, 30));
 
             // TODO: Add your drawing code here
+            x++;
+            spriteBatch.Begin();
+            spriteBatch.Draw(rect, new Vector2(0, GraphicsDevice.Viewport.Height - rect.Height), Color.HotPink);
+            spriteBatch.Draw(rect, new Vector2(0, GraphicsDevice.Viewport.Height - rect.Height * x), Color.HotPink);
+            spriteBatch.End();
 
             base.Draw(gameTime);
         }
