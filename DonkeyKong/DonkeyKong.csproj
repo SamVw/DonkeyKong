@@ -45,6 +45,7 @@
     <Compile Include="Game1.cs" />
     <Compile Include="Models\Character.cs" />
     <Compile Include="Models\Mario.cs" />
+    <Compile Include="Models\Sprite.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

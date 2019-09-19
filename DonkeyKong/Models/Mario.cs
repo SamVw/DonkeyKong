@@ -11,12 +11,20 @@ namespace DonkeyKong.Models
     {
         public int Scale = 1;
 
-        public Mario() : base()
+        public Mario()
         {
+            
         }
 
-        public Mario(int width, int heigth, Point position) : base(width, heigth, position)
+        public void SetDefaultPostion(int viewPortHeight, int offset)
         {
+            Position = new Point(0, int.Parse(viewPortHeight - Height - offset + string.Empty));
+        }
+
+        public void SetDimensions()
+        {
+            Width = 20;
+            Height = 50;
         }
     }
 }

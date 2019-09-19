@@ -14,10 +14,11 @@ namespace DonkeyKong
     {
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
-        private Texture2D myTexture;
+
         private Texture2D rect;
-        private int x = 1;
-        private int xPositionMario = 0;
+
+        private const int HEIGHT = 700;
+        private const int WIDTH = 1000;
 
         private Mario _mario;
 
@@ -26,16 +27,20 @@ namespace DonkeyKong
             graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
 
-            graphics.PreferredBackBufferHeight = 700;
-            graphics.PreferredBackBufferWidth = 1000;
+            graphics.PreferredBackBufferHeight = HEIGHT;
+            graphics.PreferredBackBufferWidth = WIDTH;
 
             TargetElapsedTime = TimeSpan.FromMilliseconds(1000.0f / 24);
 
-            _mario = (Mario)CharacterFactory.Create("Mario");
-            _mario.Width = int.Parse(Math.Round(220 * (_mario.Scale / 10.0), MidpointRounding.ToEven) + "");
-            _mario.Heigth = int.Parse(Math.Round(337 * (_mario.Scale / 10.0), MidpointRounding.ToEven) + "");
-            _mario.Position = new Point(0,
-                int.Parse(700 - _mario.Heigth - 60 + string.Empty));
+            InitMario();
+        }
+
+        private void InitMario()
+        {
+            _mario = new Mario();
+            _mario.SetSprite("mario", 337, 220);
+            _mario.SetDimensions();
+            _mario.SetDefaultPostion(HEIGHT, 55);
         }
 
         /// <summary>
@@ -61,7 +66,7 @@ namespace DonkeyKong
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
             // TODO: use this.Content to load your game content here
-            myTexture = Content.Load<Texture2D>("mario");
+            _mario.Graphics.Texture = Content.Load<Texture2D>(_mario.Graphics.Path);
         }
 
         /// <summary>
@@ -87,9 +92,9 @@ namespace DonkeyKong
             KeyboardState state = Keyboard.GetState();
 
             if (state.IsKeyDown(Keys.Right))
-                _mario.Position.X += 10;
+                _mario.MoveRight(10);
             if (state.IsKeyDown(Keys.Left))
-                _mario.Position.X -= 10;
+                _mario.MoveLeft(10);
 
 
             rect = new Texture2D(graphics.GraphicsDevice, GraphicsDevice.Viewport.Width, 30);
@@ -111,14 +116,11 @@ namespace DonkeyKong
             GraphicsDevice.Clear(new Color(30, 30, 30));
 
             // TODO: Add your drawing code here
-            x++;
             spriteBatch.Begin();
             spriteBatch.Draw(rect, new Vector2(0, GraphicsDevice.Viewport.Height - rect.Height), Color.HotPink);
-            spriteBatch.Draw(rect, new Vector2(0, GraphicsDevice.Viewport.Height - rect.Height * x), Color.HotPink);
 
-            double mario = (myTexture.Height * (2.0 / 10.0));
-            int yPosition = int.Parse(Math.Round(GraphicsDevice.Viewport.Height - mario, MidpointRounding.ToEven) - rect.Height + string.Empty);
-            spriteBatch.Draw(myTexture, _mario.Position.ToVector2(), scale: new Vector2(.2f));
+            // Drawing Mario
+            spriteBatch.Draw(_mario.Texture, _mario.Position.ToVector2(), scale: new Vector2(_mario.SpriteScale));
 
             spriteBatch.End();
 
