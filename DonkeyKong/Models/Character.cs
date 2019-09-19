@@ -35,6 +35,7 @@ namespace DonkeyKong.Models
             Graphics.Path = path;
             Graphics.Width = width;
             Graphics.Height = height;
+            Width = (int)(Graphics.Width * SpriteScale);
         }
 
         public void MoveRight(int v)
@@ -45,6 +46,16 @@ namespace DonkeyKong.Models
         public void MoveLeft(int v)
         {
             Position.X -= v;
+        }
+
+        public void MoveUp(int v)
+        {
+            Position.Y -= v;
+        }
+
+        public void MoveDown(int v)
+        {
+            Position.Y += v;
         }
     }
 }
