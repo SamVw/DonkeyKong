@@ -17,38 +17,23 @@ namespace DonkeyKong
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
 
-        GameScreen baseScreen = new GameScreen(1000, 800);
-
-        private Texture2D rect;
-
-        private Mario _mario;
-
-        private List<Beam> beams;
-        private List<Ladder> ladders;
-
         private RectangleBuilder _rectangleBuilder;
+        private DonkeyKongGame _game;
 
         public Game1()
         {
+            _game = new DonkeyKongGame();
+            _game.SetGameScreen(800, 1000);
+
             graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
 
-            graphics.PreferredBackBufferHeight = baseScreen.Height;
-            graphics.PreferredBackBufferWidth = baseScreen.Width;
+            graphics.PreferredBackBufferHeight = _game.ScreenHeight;
+            graphics.PreferredBackBufferWidth = _game.ScreenWidth;
 
             TargetElapsedTime = TimeSpan.FromMilliseconds(1000.0f / 24);
 
             _rectangleBuilder = new RectangleBuilder(graphics);
-
-            InitMario();
-        }
-
-        private void InitMario()
-        {
-            _mario = new Mario();
-            _mario.SetDimensions();
-            _mario.SetSprite("mario", 220, 337);
-            _mario.SetDefaultPostion(baseScreen.Height, 50);
         }
 
         /// <summary>
@@ -59,8 +44,8 @@ namespace DonkeyKong
         /// </summary>
         protected override void Initialize()
         {
-            beams = BeamFactory.InitializeBeams(baseScreen);
-            ladders = LadderFactory.InitializeLadders(baseScreen);
+            _game.SetMario(MarioFactory.Create(50, "mario", new Point(220, 337)));
+            _game.SetLevel();
 
             base.Initialize();
         }
@@ -75,7 +60,8 @@ namespace DonkeyKong
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
             // TODO: use this.Content to load your game content here
-            _mario.Graphics.Texture = Content.Load<Texture2D>(_mario.Graphics.Path);
+            var texture = Content.Load<Texture2D>(_game.MarioSpritePath);
+            _game.SetMarioTexture(texture);
         }
 
         /// <summary>
@@ -99,64 +85,8 @@ namespace DonkeyKong
 
             // TODO: Add your update logic here
             KeyboardState state = Keyboard.GetState();
-            BoundingBox marioBb = new BoundingBox(new Vector3(_mario.Position.X, _mario.Position.Y, 0), new Vector3(_mario.Position.X + _mario.Width, _mario.Position.Y + _mario.Height, 0));
-
-            if (state.IsKeyDown(Keys.Right))
-            {
-                if (_mario.Position.X + _mario.Width <= baseScreen.Width)
-                {
-                   _mario.MoveRight(10); 
-                }
-            }
-
-            if (state.IsKeyDown(Keys.Left))
-                _mario.MoveLeft(10);
-
-            bool isOnObject = false;
-
-            foreach (var beam in beams)
-            {
-                BoundingBox beamBb = new BoundingBox(new Vector3(beam.Position.X, beam.Position.Y, 0), new Vector3(beam.Position.X + beam.Width, beam.Position.Y + beam.Height, 0));
-                if (marioBb.Intersects(beamBb) && _mario.Position.Y + _mario.Height <= beam.Position.Y)
-                {
-                    isOnObject = true;
-                }
-            }
-
             
-            foreach (var ladder in ladders)
-            {
-                BoundingBox ladderBd = new BoundingBox(new Vector3(ladder.Position.X, ladder.Position.Y - 50, 0), new Vector3(ladder.Position.X + ladder.Width, ladder.Position.Y + ladder.Height, 0));
-
-                if (marioBb.Intersects(ladderBd))
-                {
-                    if (state.IsKeyDown(Keys.Up))
-                    {
-                        //if (ladder.Position.Y >= _mario.Position.Y + _mario.Height)
-                        //{
-                        //    _mario.Position.Y = ladder.Position.Y - 50 - _mario.Height;
-                        //}
-                        //else
-                        //{
-                        //    _mario.MoveUp(10);
-                        //}
-                        _mario.MoveUp(10);
-                    }
-                    isOnObject = true;
-                }
-            }
-
-            if (!isOnObject)
-            {
-                _mario.MoveDown(10);
-            }
-
-
-            rect = new Texture2D(graphics.GraphicsDevice, GraphicsDevice.Viewport.Width, 30);
-
-            Color[] data = new Color[GraphicsDevice.Viewport.Width * 30];
-            for (int i = 0; i < data.Length; ++i) data[i] = Color.Chocolate;
-            rect.SetData(data);
+            _game.Update(state);
 
 
             base.Update(gameTime);
@@ -172,17 +102,23 @@ namespace DonkeyKong
 
             // TODO: Add your drawing code here
             spriteBatch.Begin();
-            DrawBeams();
-            DrawLadders();
-            // Drawing Mario
-            spriteBatch.Draw(_mario.Texture, _mario.Position.ToVector2(), scale: new Vector2(_mario.SpriteScale));
+
+            DrawData data = _game.GetDrawData();
+            DrawBeams(data.Beams);
+            DrawLadders(data.Ladders);
+            DrawMario(data.Mario);
 
             spriteBatch.End();
 
             base.Draw(gameTime);
         }
 
-        private void DrawBeams()
+        private void DrawMario(Mario mario)
+        {
+            spriteBatch.Draw(mario.Texture, mario.Position.ToVector2(), scale: new Vector2(mario.SpriteScale));
+        }
+
+        private void DrawBeams(List<Beam> beams)
         {
             foreach (var beam in beams)
             {
@@ -190,7 +126,7 @@ namespace DonkeyKong
             }
         }
 
-        private void DrawLadders()
+        private void DrawLadders(List<Ladder> ladders)
         {
             foreach (var ladder in ladders)
             {

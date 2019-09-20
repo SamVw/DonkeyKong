@@ -41,14 +41,17 @@
     <ApplicationManifest>app.manifest</ApplicationManifest>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="Factories\CharacterFactory.cs" />
+    <Compile Include="Factories\MarioFactory.cs" />
     <Compile Include="Game1.cs" />
     <Compile Include="Models\Beam.cs" />
     <Compile Include="Factories\BeamFactory.cs" />
     <Compile Include="Models\Character.cs" />
+    <Compile Include="Models\DonkeyKongGame.cs" />
+    <Compile Include="Models\DrawData.cs" />
     <Compile Include="Models\GameScreen.cs" />
     <Compile Include="Models\Ladder.cs" />
     <Compile Include="Factories\LadderFactory.cs" />
+    <Compile Include="Models\Level.cs" />
     <Compile Include="Models\Mario.cs" />
     <Compile Include="Models\Rectangle.cs" />
     <Compile Include="Builders\RectangleBuilder.cs" />

@@ -17,8 +17,6 @@ namespace DonkeyKong.Models
 
         public int Height { get; set; }
 
-        public int Scale = 1;
-
         public float SpriteScale => (Height + 0.0f) / Graphics.Height;
 
         public Texture2D Texture => Graphics.Texture;
