@@ -18,12 +18,11 @@ namespace DonkeyKong.Models
 
         public void SetDefaultPostion(int viewPortHeight, int offset)
         {
-            Position = new Point(0, int.Parse(viewPortHeight - Height - offset + string.Empty));
+            Position = new Point(0, viewPortHeight - Height - offset);
         }
 
         public void SetDimensions()
         {
-            Width = 20;
             Height = 50;
         }
     }
