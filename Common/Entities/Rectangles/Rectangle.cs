@@ -1,8 +1,9 @@
-﻿using Microsoft.Xna.Framework;
+﻿using Common.Entities.Base;
+using Microsoft.Xna.Framework;
 
-namespace DonkeyKong.Models
+namespace Common.Entities
 {
-    public abstract class Rectangle
+    public abstract class Rectangle : GameEntity
     {
         public int Width { get; set; }
         public int Height { get; set; }

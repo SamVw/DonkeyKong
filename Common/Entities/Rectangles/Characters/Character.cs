@@ -1,15 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Common.Entities.Base;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace DonkeyKong.Models
+namespace Common.Entities
 {
-    public abstract class Character
+    public abstract class Character : GameEntity
     {
         public Point Position;
 
@@ -17,23 +12,21 @@ namespace DonkeyKong.Models
 
         public int Height { get; set; }
 
-        public float SpriteScale => (Height + 0.0f) / Graphics.Height;
+        public float SpriteScale => (Height + 0.0f) / Sprite.Height;
 
-        public Texture2D Texture => Graphics.Texture;
-
-        public Sprite Graphics { get; set; }
+        public Sprite Sprite { get; set; }
 
         protected Character()
         {
-            Graphics = new Sprite();
+            Sprite = new Sprite();
         }
 
         public void SetSprite(string path, int width, int height)
         {
-            Graphics.Path = path;
-            Graphics.Width = width;
-            Graphics.Height = height;
-            Width = (int)(Graphics.Width * SpriteScale);
+            Sprite.Name = path;
+            Sprite.Width = width;
+            Sprite.Height = height;
+            Width = (int)(Sprite.Width * SpriteScale);
         }
 
         public void MoveRight(int v)

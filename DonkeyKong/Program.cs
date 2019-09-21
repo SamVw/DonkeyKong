@@ -1,4 +1,6 @@
 ﻿using System;
+using Common.Interfaces;
+using Logic;
 
 namespace DonkeyKong
 {
@@ -14,7 +16,10 @@ namespace DonkeyKong
         [STAThread]
         static void Main()
         {
-            using (var game = new Game1())
+            var contentManager = new ContentManager();
+            var gameScreenManager = new GameScreenManager();
+            var donkeyKongGame = new DonkeyKongGame(contentManager, gameScreenManager);
+            using (var game = new MainGame(donkeyKongGame, contentManager, gameScreenManager))
                 game.Run();
         }
     }

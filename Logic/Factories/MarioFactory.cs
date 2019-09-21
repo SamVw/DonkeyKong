@@ -1,12 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using DonkeyKong.Models;
+﻿using Common.Entities;
 using Microsoft.Xna.Framework;
 
-namespace DonkeyKong.Factories
+namespace Logic.Factories
 {
     public static class MarioFactory
     {

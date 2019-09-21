@@ -1,8 +1,8 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Rectangle = DonkeyKong.Models.Rectangle;
+using Rectangle = Common.Entities.Rectangle;
 
-namespace DonkeyKong.Builders
+namespace Logic.Builders
 {
     public class RectangleBuilder
     {

@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using DonkeyKong.Builders;
-using DonkeyKong.Factories;
-using DonkeyKong.Models;
+using Common.Dtos;
+using Common.Entities;
+using Common.Interfaces;
+using Logic;
+using Logic.Builders;
+using Logic.Factories;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -12,28 +15,44 @@ namespace DonkeyKong
     /// <summary>
     /// This is the main type for your game.
     /// </summary>
-    public class Game1 : Game
+    public class MainGame : Game
     {
+        private readonly IContentManager _contentManager;
+        private readonly GameScreenManager _gameScreenManager;
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
 
         private RectangleBuilder _rectangleBuilder;
         private DonkeyKongGame _game;
 
-        public Game1()
+
+        public MainGame(DonkeyKongGame game, ContentManager contentManager, GameScreenManager gameScreenManager)
         {
-            _game = new DonkeyKongGame();
-            _game.SetGameScreen(800, 1000);
+            _contentManager = contentManager;
+            _gameScreenManager = gameScreenManager;
+            _game = game;
+            
 
             graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
 
-            graphics.PreferredBackBufferHeight = _game.ScreenHeight;
-            graphics.PreferredBackBufferWidth = _game.ScreenWidth;
+            InitWindow();
 
-            TargetElapsedTime = TimeSpan.FromMilliseconds(1000.0f / 24);
+            SetFramesPerSecond(24);
 
             _rectangleBuilder = new RectangleBuilder(graphics);
+        }
+
+        private void InitWindow()
+        {
+            _gameScreenManager.SetGameScreen(800, 1000);
+            graphics.PreferredBackBufferHeight = _gameScreenManager.Height;
+            graphics.PreferredBackBufferWidth = _gameScreenManager.Width;
+        }
+
+        private void SetFramesPerSecond(int fps)
+        {
+            TargetElapsedTime = TimeSpan.FromMilliseconds(1000.0f / fps);
         }
 
         /// <summary>
@@ -44,8 +63,9 @@ namespace DonkeyKong
         /// </summary>
         protected override void Initialize()
         {
-            _game.SetMario(MarioFactory.Create(50, "mario", new Point(220, 337)));
-            _game.SetLevel();
+            _game.Init();
+
+            _contentManager.SetInternalManager(Content);
 
             base.Initialize();
         }
@@ -60,8 +80,7 @@ namespace DonkeyKong
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
             // TODO: use this.Content to load your game content here
-            var texture = Content.Load<Texture2D>(_game.MarioSpritePath);
-            _game.SetMarioTexture(texture);
+            _game.LoadContent();
         }
 
         /// <summary>
@@ -104,33 +123,32 @@ namespace DonkeyKong
             spriteBatch.Begin();
 
             DrawData data = _game.GetDrawData();
-            DrawBeams(data.Beams);
-            DrawLadders(data.Ladders);
-            DrawMario(data.Mario);
+            DrawScene(data);
 
             spriteBatch.End();
 
             base.Draw(gameTime);
         }
 
-        private void DrawMario(Mario mario)
+        private void DrawScene(DrawData data)
         {
-            spriteBatch.Draw(mario.Texture, mario.Position.ToVector2(), scale: new Vector2(mario.SpriteScale));
-        }
-
-        private void DrawBeams(List<Beam> beams)
-        {
-            foreach (var beam in beams)
+            if (data == null || data.Objects == null)
             {
-                spriteBatch.Draw(_rectangleBuilder.BuildTexture(beam), beam.Position.ToVector2());
+                return;
             }
-        }
 
-        private void DrawLadders(List<Ladder> ladders)
-        {
-            foreach (var ladder in ladders)
+            foreach (var obj in data.Objects)
             {
-                spriteBatch.Draw(_rectangleBuilder.BuildTexture(ladder), ladder.Position.ToVector2());
+                var texture = _contentManager.GetTexture(obj.Sprite);
+
+                if (obj.Scale == null)
+                {
+                    spriteBatch.Draw(texture, obj.Position);
+                }
+                else
+                {
+                    spriteBatch.Draw(texture, obj.Position, scale: new Vector2((float)obj.Scale));
+                }
             }
         }
     }

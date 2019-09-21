@@ -1,4 +1,4 @@
-﻿namespace DonkeyKong.Models
+﻿namespace Common.Entities
 {
     public class GameScreen
     {

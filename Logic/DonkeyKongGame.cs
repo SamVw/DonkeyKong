@@ -1,45 +1,27 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using DonkeyKong.Factories;
+using Common.Dtos;
+using Common.Entities;
+using Common.Interfaces;
+using Logic.Factories;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
-namespace DonkeyKong.Models
+namespace Logic
 {
-    public class DonkeyKongGame
+    public class DonkeyKongGame : IDonkeyKongGame
     {
+        private readonly IContentManager _contentManager;
+        private readonly IGameScreenManager _gameScreenManager;
         public Mario Mario { get; private set; }
 
         public Level Level { get; private set; }
 
 
-
-        public GameScreen GameScreen { get; private set; }
-
-        public int ScreenHeight => GameScreen.Height;
-        public int ScreenWidth => GameScreen.Width;
-
-
-
-        public string MarioSpritePath => Mario.Graphics.Path;
-
-        public float MarioX => Mario.Position.X;
-
-        public float MarioY => Mario.Position.Y;
-
-        public int MarioW => Mario.Width;
-
-        public int MarioH => Mario.Height;
-
-
-
-        public void SetGameScreen(int width, int height)
+        public DonkeyKongGame(IContentManager contentManager, IGameScreenManager gameScreenManager)
         {
-            GameScreen = new GameScreen(height, width);
+            _contentManager = contentManager;
+            _gameScreenManager = gameScreenManager;
         }
 
         public void SetMario(Mario mario)
@@ -47,25 +29,20 @@ namespace DonkeyKong.Models
             Mario = mario;
         }
 
-        public void SetLevel()
+        public void SetLevel(System.Collections.Generic.List<Beam> list, System.Collections.Generic.List<Ladder> list1)
         {
             Level = new Level();
-            Level.Beams = BeamFactory.InitializeBeams(GameScreen);
-            Level.Ladders = LadderFactory.InitializeLadders(GameScreen);
-        }
-
-        public void SetMarioTexture(Texture2D texture)
-        {
-            Mario.Graphics.Texture = texture;
+            Level.Beams = BeamFactory.InitializeBeams(_gameScreenManager.Width, _gameScreenManager.Height);
+            Level.Ladders = LadderFactory.InitializeLadders(_gameScreenManager.Width, _gameScreenManager.Height);
         }
 
         public void Update(KeyboardState state)
         {
-            BoundingBox marioBb = new BoundingBox(new Vector3(MarioX, MarioY, 0), new Vector3(MarioX + MarioW, MarioY + MarioH, 0));
+            BoundingBox marioBb = new BoundingBox(new Vector3(Mario.X, Mario.Y, 0), new Vector3(Mario.X + Mario.Width, Mario.Y + Mario.Height, 0));
 
             if (state.IsKeyDown(Keys.Right))
             {
-                if (MarioX + MarioW <= ScreenWidth)
+                if (Mario.X + Mario.Width <= _gameScreenManager.Width)
                 {
                     Mario.MoveRight(10);
                 }
@@ -79,7 +56,7 @@ namespace DonkeyKong.Models
             foreach (var beam in Level.Beams)
             {
                 BoundingBox beamBb = new BoundingBox(new Vector3(beam.Position.X, beam.Position.Y, 0), new Vector3(beam.Position.X + beam.Width, beam.Position.Y + beam.Height, 0));
-                if (marioBb.Intersects(beamBb) && MarioY + MarioH <= beam.Position.Y)
+                if (marioBb.Intersects(beamBb) && Mario.Y + Mario.Height <= beam.Position.Y)
                 {
                     isOnObject = true;
                 }
@@ -106,14 +83,20 @@ namespace DonkeyKong.Models
             }
         }
 
+        public void Init()
+        {
+            SetMario(MarioFactory.Create(50, "mario", new Point(220, 337)));
+            SetLevel(BeamFactory.InitializeBeams(_gameScreenManager.Width, _gameScreenManager.Height), LadderFactory.InitializeLadders(_gameScreenManager.Width, _gameScreenManager.Height));
+        }
+
         public DrawData GetDrawData()
         {
-            return new DrawData()
-            {
-                Mario = Mario,
-                Beams = Level.Beams,
-                Ladders = Level.Ladders
-            };
+            return new DrawData();
+        }
+
+        public void LoadContent()
+        {
+            _contentManager.LoadTexture("mario");
         }
     }
 }

@@ -1,12 +1,12 @@
 ﻿using System.Collections.Generic;
-using DonkeyKong.Models;
+using Common.Entities;
 using Microsoft.Xna.Framework;
 
-namespace DonkeyKong.Factories
+namespace Logic.Factories
 {
     public static class LadderFactory
     {
-        public static List<Ladder> InitializeLadders(GameScreen baseScreenSize)
+        public static List<Ladder> InitializeLadders(int width, int height)
         {
             List<Ladder> ladders = new List<Ladder>()
             {
@@ -14,31 +14,31 @@ namespace DonkeyKong.Factories
                     width: 30,
                     height: 100,
                     color: Color.CornflowerBlue,
-                    position: new Point((int) (baseScreenSize.Width*0.7), baseScreenSize.Height - 150)
+                    position: new Point((int) (width*0.7), height - 150)
                 ),
                 new Ladder(
                     width: 30,
                     height: 100,
                     color: Color.CornflowerBlue,
-                    position: new Point((int) (baseScreenSize.Width*0.2), baseScreenSize.Height - 300)
+                    position: new Point((int) (width*0.2), height - 300)
                 ),
                 new Ladder(
                     width: 30,
                     height: 100,
                     color: Color.CornflowerBlue,
-                    position: new Point((int) (baseScreenSize.Width*0.8), baseScreenSize.Height - 450)
+                    position: new Point((int) (width*0.8), height - 450)
                 ),
                 new Ladder(
                     width: 30,
                     height: 100,
                     color: Color.CornflowerBlue,
-                    position: new Point((int) (baseScreenSize.Width*0.3), baseScreenSize.Height - 600)
+                    position: new Point((int) (width*0.3), height - 600)
                 ),
                 new Ladder(
                     width: 30,
                     height: 100,
                     color: Color.CornflowerBlue,
-                    position: new Point((int) (baseScreenSize.Width*0.7), baseScreenSize.Height - 750)
+                    position: new Point((int) (width*0.7), height - 750)
                 )
             };
 

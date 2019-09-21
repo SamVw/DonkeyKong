@@ -1,24 +1,24 @@
 ﻿using System.Collections.Generic;
-using DonkeyKong.Models;
+using Common.Entities;
 using Microsoft.Xna.Framework;
 
-namespace DonkeyKong.Factories
+namespace Logic.Factories
 {
     public static class BeamFactory
     {
-        public static List<Beam> InitializeBeams(GameScreen baseScreenSize)
+        public static List<Beam> InitializeBeams(int width, int height)
         {
             List<Beam> beams = new List<Beam>()
             {
                 new Beam(
-                    width: (int) baseScreenSize.Width,
+                    width: (int) width,
                     height: 50,
                     color: Color.HotPink,
-                    position: new Point(0, baseScreenSize.Height - 50)
+                    position: new Point(0, height - 50)
                 )
             };
 
-            var lastBeamY = baseScreenSize.Height - 50;
+            var lastBeamY = height - 50;
 
             while (lastBeamY >= 350)
             {
@@ -27,7 +27,7 @@ namespace DonkeyKong.Factories
                 var beamx = beams.Count % 2 == 0 ? 100 : 0;
                 beams.Add(
                     new Beam(
-                        width: (int) (baseScreenSize.Width - 100),
+                        width: (int) (width - 100),
                         height: 50,
                         color: Color.HotPink,
                         position: new Point(beamx, beamy)
